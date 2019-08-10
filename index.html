@@ -16,9 +16,23 @@
                 <h2 id="title"></h2>
                 <div id="results"></div>
             </div>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js">
-
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
+            <script>
+                const compHtml = document.querySelector('#results')
+                const getCompanies = async()=>{
+                const response = await axios.get(`https://acme-users-api-rev.herokuapp.com/api/companies`);
+                const compData = response.data;
+                //console.log("",compData);
+                render (compData);
+                }
+                const render = (compData)=>{
+                    console.log("",compData);
+                    const companies =compData.map(company =>`<li>${company.name}</li>`).join('');
+                    compHtml.innerHTML=`<ul>${companies}</ul>`
+                }
+                getCompanies()
             </script>
+            
         </body>
     </head>
 </html>
