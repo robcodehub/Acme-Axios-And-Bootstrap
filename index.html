@@ -14,7 +14,7 @@
                     </li>
                 </ul>
                 <h2 id="title"></h2>
-                <div id="results">Blank until link clicked (for now)</div>
+                <div id="results">Loading...</div>
             </div>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
@@ -45,6 +45,8 @@
 
                     companyLink.innerHTML = `Companies (${companyLength})`;
                     productLink.innerHTML = `Products (${productLength})`;
+
+                    renderCompanies(companyData);
                 }
 
                 const renderCompanies = (compData)=> {
@@ -107,6 +109,7 @@
 
                 loadData();
 
+                /*
                 companyLink.addEventListener('click', (ev) => {
                     renderCompanies(companyData);
                 });
@@ -114,6 +117,23 @@
                 productLink.addEventListener('click', (ev) => {
                     renderProducts(productData);
                 });;
+                  */
+
+                window.addEventListener("load", function() {
+                  loadData();
+                  });
+
+
+                  window.addEventListener('hashchange', ()=> {
+                    let hashId = window.location.hash;
+
+                    if (hashId === '#products') {
+                      renderProducts(productData);
+                    } else if (hashId === '#companies') {
+                      renderCompanies(companyData);
+                    }
+                    });
+
 
             </script>
 
