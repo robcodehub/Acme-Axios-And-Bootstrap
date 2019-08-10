@@ -20,19 +20,27 @@
             <script>
                 const compHtml = document.querySelector('#results')
                 const getCompanies = async()=>{
-                const response = await axios.get(`https://acme-users-api-rev.herokuapp.com/api/companies`);
-                const compData = response.data;
+                const hashId = window.location.hash ? 1*window.location.hash.slice(1) : 0;
+                console.log("hash ID=", hashId)
+                const response = await axios.get(`https://acme-users-api-rev.herokuapp.com/api/${hashId}`);
+                const dataToRender = response.data;
                 //console.log("",compData);
-                render (compData);
+                render (dataToRender);
                 }
-                const render = (compData)=>{
-                    console.log("",compData);
-                    const companies =compData.map(company =>`<li>${company.name}</li>`).join('');
-                    compHtml.innerHTML=`<ul>${companies}</ul>`
+                const render = (apiData)=>{
+                    console.log("",apiData);
+                    const allData = apiData.map(item =>`<li>${item.name}</li>`).join('');
+                    compHtml.innerHTML=`<ul>${allData}</ul>`
                 }
                 getCompanies()
+
+                window.addEventListener('hashchange', ()=> {
+                  render();
+                });
+
+
             </script>
-            
+
         </body>
     </head>
 </html>
