@@ -7,10 +7,10 @@
                 <h1>Acme w/Bootstrap and Axios VJS</h1>
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                    <a class="nav-link" id="companiesLink" href="#companies">Companies</a>
+                        <a class="nav-link" id="companiesLink" href="#companies">Companies</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nave-link" href="#products" id="productsLink">Products</a>
+                        <a class="nave-link" href="#products" id="productsLink">Products</a>
                     </li>
                 </ul>
                 <h2 id="title"></h2>
@@ -19,24 +19,103 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
             <script>
                 const compHtml = document.querySelector('#results')
-                const getCompanies = async()=>{
-                const hashId = window.location.hash ? 1*window.location.hash.slice(1) : 0;
-                console.log("hash ID=", hashId)
-                const response = await axios.get(`https://acme-users-api-rev.herokuapp.com/api/${hashId}`);
-                const dataToRender = response.data;
-                //console.log("",compData);
-                render (dataToRender);
-                }
-                const render = (apiData)=>{
-                    console.log("",apiData);
-                    const allData = apiData.map(item =>`<li>${item.name}</li>`).join('');
-                    compHtml.innerHTML=`<ul>${allData}</ul>`
-                }
-                getCompanies()
+                const companyLink = document.querySelector('#companiesLink');
+                const productLink = document.querySelector('#productsLink');
 
-                window.addEventListener('hashchange', ()=> {
-                  render();
+                const loadData = async () => {
+                    const companyURL = `https://acme-users-api-rev.herokuapp.com/api/companies`;
+                    const productURL = 'https://acme-users-api-rev.herokuapp.com/api/products';
+                    const responses = await Promise.all([fetch(companyURL), fetch(productURL)]);
+                    const [companies, products] = await Promise.all(responses.map(response => response.json()));
+                    console.log('companies: ', companies);
+                    console.log('products: ', products);
+                    companyLength = companies.length;
+                    productLength = products.length;
+
+                    companyLink.innerHTML = `Companies (${companyLength})`;
+                    productLink.innerHTML = `Products (${productLength})`;
+                }
+
+                const getCompanies = async ()=>{
+                    //const hashId = window.location.hash ? 1*window.location.hash.slice(1) : 0;
+                    //console.log("hash ID=", hashId)
+                    const response = await axios.get(`https://acme-users-api-rev.herokuapp.com/api/companies`);
+                    const companyData = response.data;
+                    //console.log("",compData);
+                    renderCompanies(companyData);
+                }
+
+                const getProducts = async () => {
+                    const response = await axios.get('https://acme-users-api-rev.herokuapp.com/api/products');
+                    const productData = response.data;
+                    renderProducts(productData);
+                };
+
+                const renderCompanies = (compData)=> {
+                    const html = `
+                        <table>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>State</th>
+                                <th>Catch Phrase</th>
+                            </tr>
+                            ${
+                                compData.map(company => {
+                                    return `
+                                        <tr>
+                                            <td>${company.id}</td>
+                                            <td>${company.name}</td>
+                                            <td>${company.phone}</td>
+                                            <td>${company.state}</td>
+                                            <td>${company.catchPhrase}</td>
+                                        </tr>
+                                    `
+                                }).join('')
+                            }
+                        </table>
+                    `;
+                    compHtml.innerHTML = html;
+                };
+
+                const renderProducts = (productData) => {
+                    const html = `
+                        <table>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Suggested Price</th>
+                            </tr>
+                            ${
+                                productData.map(product => {
+                                    return `
+                                        <tr>
+                                            <td>${product.id}</td>
+                                            <td>${product.name}</td>
+                                            <td>${product.description}</td>
+                                            <td>${product.suggestedPrice}</td>
+                                        </tr>
+                                    `
+                                }).join('')
+                            }
+                        </table>
+                    `;
+                    compHtml.innerHTML = html;
+                };
+
+                loadData();
+                companyLink.addEventListener('click', (ev) => {
+                    getCompanies();
                 });
+
+                productLink.addEventListener('click', (ev) => {
+                    getProducts();
+                });
+                // window.addEventListener('hashchange', ()=> {
+                //   render();
+                // });
 
 
             </script>
