@@ -125,12 +125,17 @@
 
 
                   window.addEventListener('hashchange', ()=> {
-                    let hashId = window.location.hash;
+                    let hashId = window.location.hash.slice(1);
 
-                    if (hashId === '#products') {
+                    if (hashId === 'products') {
                       renderProducts(productData);
-                    } else if (hashId === '#companies') {
+                      companyLink.classList.remove('active');
+                      productLink.classList.add('active');
+
+                    } else if (hashId === 'companies') {
                       renderCompanies(companyData);
+                      companyLink.classList.add('active');
+                      productLink.classList.remove('active');
                     }
                     });
 
